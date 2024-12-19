@@ -56,6 +56,7 @@
   environment.systemPackages = with pkgs; [
     vim
     tree
+    tailscale
   ];
 
   services.openssh.enable = true;
