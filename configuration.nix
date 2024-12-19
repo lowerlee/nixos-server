@@ -9,6 +9,7 @@
     ./modules/system.nix
     ./modules/users.nix
     ./modules/syncthing.nix
+    ./modules/tailscale.nix
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
