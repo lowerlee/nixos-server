@@ -1,14 +1,16 @@
 { config, pkgs, ... }:
 
 {
-  networking.hostName = "nixos-server";
-  networking.networkmanager.enable = true;
-
-  networking.firewall = {
-    enable = true;
-    allowedTCPPorts = [ 8384 ];
-    trustedInterfaces = [ "tailscale0" ];
-    checkReversePath = "loose";
+  networking = {
+    hostName = "nixos-server";
+    networkmanager.enable = true;
+    firewall = {
+      checkReversePath = "loose";
+      allowedTCPPorts = [ 8384 ];
+      trustedInterfaces = [ "tailscale0" ];
+      enable = true;
+    };
+    nftables.enable = true;
   };
 
   services.resolved = {
