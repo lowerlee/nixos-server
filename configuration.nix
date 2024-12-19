@@ -8,6 +8,7 @@
     ./modules/networking.nix
     ./modules/system.nix
     ./modules/users.nix
+    ./modules/syncthing.nix
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
