@@ -10,4 +10,9 @@
     trustedInterfaces = [ "tailscale0" ];
     checkReversePath = "loose";
   };
+
+  services.resolved = {
+    enable = true;
+    dnssec = "true";
+  };
 }
