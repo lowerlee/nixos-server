@@ -1,21 +1,12 @@
 { config, pkgs, ... }:
 
 {
-  networking = {
-    hostName = "nixos";
-    networkmanager.enable = true;
-    firewall = {
-      checkReversePath = "loose";
-      allowedTCPPorts = [ 8384 22000 ];
-      allowedUDPPorts = [ 22000 21027 ];
-      trustedInterfaces = [ "tailscale0" ];
-      enable = true;
-    };
-    nftables.enable = true;
-  };
-
-  services.resolved = {
+  services.tailscale = {
     enable = true;
-    dnssec = "true";
+    useRoutingFeatures = "both";
+    extraUpFlags = [
+      "--exit-node=us-nyc-wg-301.mullvad.ts.net"
+      "--exit-node-allow-lan-access=true"
+    ];
   };
 }
