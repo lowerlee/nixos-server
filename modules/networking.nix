@@ -7,5 +7,7 @@
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [ 8384 ];
+    trustedInterfaces = [ "tailscale0" ];
+    checkReversePath = "loose";
   };
 }
