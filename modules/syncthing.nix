@@ -5,7 +5,7 @@
     enable = true;
     guiAddress = "0.0.0.0:8384";
     openDefaultPorts = true;
-    dataDir = "/home/k/obsidian";
+    dataDir = "/home/k";
     user = "k";
     settings = {
       gui = {
