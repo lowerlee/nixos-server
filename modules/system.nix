@@ -51,6 +51,13 @@
     "i8042.nomux"   
   ];
 
+  fileSystems."/mnt/storage" = {
+    device = "/dev/sdb1";
+    fsType = "auto";
+    options = [ "defaults" "nofail" ];
+    createMountPoint = true;
+  };
+
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
