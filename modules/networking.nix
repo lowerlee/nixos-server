@@ -4,6 +4,7 @@
   networking = {
     hostName = "nixos-server";
     networkmanager.enable = true;
+    networkmanager.wait-online.enable = false;
     firewall = {
       checkReversePath = "loose";
       allowedTCPPorts = [ 8384 22000 ];
