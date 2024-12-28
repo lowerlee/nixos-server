@@ -8,6 +8,11 @@
     wants = [ "network-online.target" ];
     wantedBy = [ "multi-user.target" ];
 
+    environment = {
+      QBT_WEBUI_USERNAME = "admin";
+      QBT_WEBUI_PASSWORD = "adminadmin";
+    };
+
     serviceConfig = {
       ExecStart = ''
         ${pkgs.qbittorrent-nox}/bin/qbittorrent-nox \
