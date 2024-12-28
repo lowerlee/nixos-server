@@ -9,6 +9,5 @@
     webPort = 8080;
     user = "k";
     group = "users";
-    openFirewall = true;
   };
 }
