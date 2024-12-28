@@ -57,8 +57,8 @@
   ];
 
   fileSystems."/mnt/media" = {
-    device = "/dev/sdb1";
-    fsType = "auto";
+    device = "/dev/disk/by-uuid/bd186ffd-b2ab-4ab8-85ee-dfb0f490c93c";
+    fsType = "ext4";
     options = [ "defaults" "nofail" "rw" ];
   };
 
