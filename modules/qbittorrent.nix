@@ -2,15 +2,23 @@
 
 {
   systemd.services.qbittorrent = {
-    description = "qBittorrent-nox service";
-    after = [ "network.target" ];
+    enable = true;
+    description = "qBittorrent-nox daemon";
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
     wantedBy = [ "multi-user.target" ];
-    
+
     serviceConfig = {
-      Type = "simple";
+      ExecStart = ''
+        ${pkgs.qbittorrent-nox}/bin/qbittorrent-nox \
+        --webui-port=8080 \
+        --torrenting-port=8999 \
+        --save-path=/mnt/media \
+        --daemon
+      '';
       User = "k";
       Group = "users";
-      ExecStart = "${pkgs.qbittorrent-nox}/bin/qbittorrent-nox --webui-port=8080 --username=admin --password=Xfy@R!CKqx9qFTiAZh4%QC#bK64uXe%2Le*m";
+      Restart = "on-failure";
     };
   };
 }
