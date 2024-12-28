@@ -29,11 +29,5 @@
         };
       };
     };
-
-    xdg.configFile."qBittorrent/qBittorrent.conf".text = ''
-      [Preferences]
-      WebUI\Username=admin
-      WebUI\Password_PBKDF2="@ByteArray(AUDBiaMILHUAYYqVJOqBhg==:QX+kqYJns0Q8yRhDTXJoXw6s5g1RYrJzFO+YHAnPqYI5U0S6BIUhpd/2QeF0qF2H4qsGT/XNhO3FtD7oUs6aug==)"
-    '';
   };
 }
