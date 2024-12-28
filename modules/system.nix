@@ -60,7 +60,6 @@
     device = "/dev/sdb1";
     fsType = "auto";
     options = [ "defaults" "nofail" "rw" ];
-    createMountPoint = true;
   };
 
   nixpkgs.config.allowUnfree = true;
