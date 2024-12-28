@@ -54,6 +54,8 @@
   systemd.tmpfiles.rules = [
     "d /mnt 0755 root root"
     "d /mnt/media 0777 k users"
+    "d /mnt/media/shows 0777 k users"
+    "d /mnt/media/movies 0777 k users"
   ];
 
   fileSystems."/mnt/media" = {
