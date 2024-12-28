@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 {
-  services.qbittorrent = {
+  services.qbittorrent-nox = {
     enable = true;
     dataDir = "/mnt/media";
     openFirewall = true;
