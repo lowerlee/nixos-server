@@ -10,13 +10,7 @@
       Type = "simple";
       User = "k";
       Group = "users";
-      ExecStart = ''
-        ${pkgs.qbittorrent-nox}/bin/qbittorrent-nox \
-          --webui-port=8080 \
-          --username=admin \
-          --password=Xfy@R!CKqx9qFTiAZh4%QC#bK64uXe%2Le*m
-      '';
-      Restart = "on-failure";
+      ExecStart = "${pkgs.qbittorrent-nox}/bin/qbittorrent-nox --webui-port=8080 --username=admin --password=Xfy@R!CKqx9qFTiAZh4%QC#bK64uXe%2Le*m";
     };
   };
 }
