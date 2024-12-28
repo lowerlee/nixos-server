@@ -51,10 +51,15 @@
     "i8042.nomux"   
   ];
 
-  fileSystems."/mnt/storage" = {
+  systemd.tmpfiles.rules = [
+    "d /mnt 0755 root root"
+    "d /mnt/media 0777 k users"
+  ];
+
+  fileSystems."/mnt/media" = {
     device = "/dev/sdb1";
     fsType = "auto";
-    options = [ "defaults" "nofail" ];
+    options = [ "defaults" "nofail" "rw" ];
     createMountPoint = true;
   };
 
