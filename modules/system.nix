@@ -68,7 +68,7 @@
     vim
     tree
     tailscale
-    qbittorrent
+    qbittorrent-nox
   ];
 
   services.openssh.enable = true;

@@ -1,13 +1,20 @@
 { config, pkgs, ... }:
 
 {
-  services.qbittorrent-nox = {
-    enable = true;
-    dataDir = "/mnt/media";
-    openFirewall = true;
-    port = 8999;
-    webPort = 8080;
-    user = "k";
-    group = "users";
+  systemd.services.qbittorrent = {
+    description = "qBittorrent-nox service";
+    after = [ "network.target" ];
+    wantedBy = [ "multi-user.target" ];
+    
+    serviceConfig = {
+      Type = "simple";
+      User = "k";
+      Group = "users";
+      ExecStart = "${pkgs.qbittorrent-nox}/bin/qbittorrent-nox --webui-port=8080";
+      Restart = "on-failure";
+    };
   };
+
+  networking.firewall.allowedTCPPorts = [ 8080 8999 ];
+  networking.firewall.allowedUDPPorts = [ 8999 ];
 }
