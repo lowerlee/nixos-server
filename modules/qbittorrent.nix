@@ -15,6 +15,7 @@
         --torrenting-port=8999 \
         --save-path=/mnt/media \
         --daemon
+        --confirm-legal-notice
       '';
       User = "k";
       Group = "users";
