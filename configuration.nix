@@ -11,7 +11,7 @@
     ./modules/syncthing.nix
     ./modules/tailscale.nix
     ./modules/qbittorrent.nix
-    ./modules/jellyfin
+    ./modules/jellyfin.nix
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
