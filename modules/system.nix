@@ -72,6 +72,8 @@
     tailscale
     qbittorrent-nox
     jellyfin
+    jellyfin-web
+    jellyfin-ffmpeg
   ];
 
   services.openssh.enable = true;
