@@ -71,6 +71,7 @@
     tree
     tailscale
     qbittorrent-nox
+    jellyfin
   ];
 
   services.openssh.enable = true;
