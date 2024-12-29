@@ -51,12 +51,26 @@
     "i8042.nomux"   
   ];
 
+  systemd.tmpfiles.rules = [
+    "d /mnt 0755 root root"
+    "d /mnt/media 0777 k users"
+    "d /mnt/media/shows 0777 k users"
+    "d /mnt/media/movies 0777 k users"
+  ];
+
+  fileSystems."/mnt/media" = {
+    device = "/dev/disk/by-uuid/bd186ffd-b2ab-4ab8-85ee-dfb0f490c93c";
+    fsType = "ext4";
+    options = [ "defaults" "nofail" "rw" ];
+  };
+
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
     vim
     tree
     tailscale
+    qbittorrent-nox
   ];
 
   services.openssh.enable = true;

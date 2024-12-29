@@ -10,6 +10,7 @@
     ./modules/users.nix
     ./modules/syncthing.nix
     ./modules/tailscale.nix
+    ./modules/qbittorrent.nix
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
