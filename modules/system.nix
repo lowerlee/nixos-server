@@ -72,6 +72,7 @@
     tailscale
     qbittorrent-nox
     jellyfin
+    rss-bridge
   ];
 
   services.openssh.enable = true;
