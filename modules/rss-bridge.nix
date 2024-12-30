@@ -18,7 +18,7 @@
 
     script = ''
       if ! ${pkgs.docker}/bin/docker image inspect rss-bridge >/dev/null 2>&1; then
-        ${pkgs.docker}/bin/docker build -t rss-bridge https://github.com/lowerlee/rss-bridge.git#master
+        ${pkgs.docker}/bin/docker build -t rss-bridge https://github.com/lowerlee/rss-bridge.git#master --no-cache
       fi
 
       exec ${pkgs.docker}/bin/docker run \
