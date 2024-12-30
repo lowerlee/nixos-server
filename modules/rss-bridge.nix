@@ -15,7 +15,7 @@
     description = "RSS-Bridge Docker Service";
     wantedBy = [ "multi-user.target" ];
     requires = [ "docker.service" ];
-    after = [ "docker.service" ];
+    after = [ "docker.service" "network.target" ];
 
     # Ensure the container is removed before starting
     preStart = ''
@@ -26,15 +26,15 @@
     script = ''
       # Build the image if it doesn't exist
       if ! ${pkgs.docker}/bin/docker image inspect rss-bridge >/dev/null 2>&1; then
-        ${pkgs.docker}/bin/docker build -t rss-bridge github:RSS-Bridge/rss-bridge
+        ${pkgs.docker}/bin/docker build -t rss-bridge https://github.com/RSS-Bridge/rss-bridge.git#master
       fi
 
-      # Create and start the container
-      ${pkgs.docker}/bin/docker run \
+      # Run the container
+      exec ${pkgs.docker}/bin/docker run \
+        --rm \
         --name rss-bridge \
         --publish 3000:80 \
-        --volume /etc/rss-bridge/config:/config \
-        --restart unless-stopped \
+        --volume /etc/rss-bridge/config:/config:Z \
         rss-bridge
     '';
 
@@ -45,12 +45,12 @@
 
     # Service configuration
     serviceConfig = {
-      Type = "simple";
+      Type = "exec";
+      ExecStop = "${pkgs.docker}/bin/docker stop rss-bridge";
       Restart = "always";
       RestartSec = "10";
+      StartLimitIntervalSec = "60";
+      StartLimitBurst = "3";
     };
   };
-
-  # Add port to firewall
-  networking.firewall.allowedTCPPorts = [ 3000 ];
 }
