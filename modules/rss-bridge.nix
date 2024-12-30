@@ -5,9 +5,9 @@
     enable = true;
     virtualHost = "localhost";
     
-    user = "rssbridge";
-    group = "rssbridge";
-    
+    user = "k";
+    group = "users";
+
     pool = "rss-bridge";
     
     dataDir = "/var/lib/rss-bridge";
