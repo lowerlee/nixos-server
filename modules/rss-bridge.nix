@@ -8,15 +8,7 @@
     user = "rssbridge";
     group = "rssbridge";
     
-    pool = {
-      settings = {
-        "pm" = "dynamic";
-        "pm.max_children" = 32;
-        "pm.start_servers" = 2;
-        "pm.min_spare_servers" = 2;
-        "pm.max_spare_servers" = 4;
-      };
-    };
+    pool = "rss-bridge";
     
     dataDir = "/var/lib/rss-bridge";
     
