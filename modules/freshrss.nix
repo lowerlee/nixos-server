@@ -12,7 +12,6 @@
       exec ${pkgs.docker}/bin/docker run \
         -d \
         --restart unless-stopped \
-        --log-opt max-size=10m \
         -p 8081:80 \
         -e TZ=Europe/Paris \
         -e 'CRON_MIN=1,31' \
