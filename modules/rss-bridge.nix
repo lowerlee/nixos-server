@@ -14,6 +14,8 @@
 
     preStart = ''
       ${pkgs.docker}/bin/docker rm -f rss-bridge || true
+      ${pkgs.docker}/bin/docker rmi -f rss-bridge || true
+      ${pkgs.docker}/bin/docker system prune -f
     '';
 
     script = ''
