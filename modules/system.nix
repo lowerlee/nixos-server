@@ -72,6 +72,7 @@
     tailscale
     qbittorrent-nox
     jellyfin
+    docker
   ];
 
   services.openssh.enable = true;
