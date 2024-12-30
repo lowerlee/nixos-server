@@ -13,6 +13,7 @@
     ./modules/qbittorrent.nix
     ./modules/jellyfin.nix
     ./modules/rss-bridge.nix
+    ./modules/freshrss.nix
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
