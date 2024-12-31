@@ -21,11 +21,15 @@
           id = "JVJWMW6-YOQPXH2-WKQRKYN-QPFRZGX-LO52ONW-2B46SY7-JX63A6S-WNRHAQQ";
           addresses = [ "tcp://100.90.112.73:22000" "quic://100.90.112.73:22000" ];
         };  
+        "work-laptop" = {
+          id = "N6JWB2H-LNOZ2FR-74NHQC2-AYH2ZIE-ECZYTCI-UKNNO45-KSOW3ZI-IQLZUAI";
+          addresses = [ "tcp://100.88.171.12:22000" "quic://100.88.171.12:22000" ];
+        };  
       };
       folders = {
         "notes" = {
           path = "/home/k/obsidian";
-          devices = [ "pixel9-pro-xl" "nixos-desktop" ];
+          devices = [ "pixel9-pro-xl" "nixos-desktop" "work-laptop" ];
         };
       };
       options = {
