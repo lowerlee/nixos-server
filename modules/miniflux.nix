@@ -4,7 +4,7 @@
   services.miniflux = {
     enable = true;
     createDatabaseLocally = true;
-    adminCredentialsFile = "/etc/miniflux.env";
+    adminCredentialsFile = "/etc/miniflux";
 
     config = {
       LISTEN_ADDR = "0.0.0.0:8082";
