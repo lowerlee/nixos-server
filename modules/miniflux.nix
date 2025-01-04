@@ -4,7 +4,6 @@
   services.miniflux = {
     enable = true;
     createDatabaseLocally = true;
-    adminCredentialsFile = "/etc/nixos/secrets/miniflux-admin.env";
 
     config = {
       LISTEN_ADDR = "0.0.0.0:8082";
@@ -21,6 +20,8 @@
       LOG_LEVEL = "info";
 
       CREATE_ADMIN = "1";
+      ADMIN_USERNAME = "k";
+      ADMIN_PASSWORD = "k;
     };
   };
 }
