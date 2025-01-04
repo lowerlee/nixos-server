@@ -4,7 +4,8 @@
   services.miniflux = {
     enable = true;
     createDatabaseLocally = true;
-    
+    adminCredentialsFile = "/etc/nixos/secrets/miniflux-admin";
+
     config = {
       LISTEN_ADDR = "0.0.0.0:8082";
       BASE_URL = "http://100.69.173.61:8082";
@@ -18,6 +19,8 @@
       CLEANUP_ARCHIVE_UNREAD_DAYS = "180";
       
       LOG_LEVEL = "info";
+
+      CREATE_ADMIN = "1";
     };
   };
 }
