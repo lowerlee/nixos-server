@@ -2,8 +2,8 @@
 
 let
   credentialsContent = ''
-    ADMIN_USERNAME=k
-    ADMIN_PASSWORD=k
+    ADMIN_USERNAME=admin
+    ADMIN_PASSWORD=adminadmin
   '';
 in
 {
