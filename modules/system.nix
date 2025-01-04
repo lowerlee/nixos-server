@@ -56,8 +56,6 @@
     "d /mnt/media 0777 k users"
     "d /mnt/media/shows 0777 k users"
     "d /mnt/media/movies 0777 k users"
-    "d /var/lib/miniflux 0755 k users -"
-    "f /var/lib/miniflux/admin-credentials 0600 k users - ADMIN_USERNAME=k\nADMIN_PASSWORD=k"
   ];
 
   fileSystems."/mnt/media" = {
