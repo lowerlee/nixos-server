@@ -19,7 +19,7 @@ in
     
     config = {
       LISTEN_ADDR = "0.0.0.0:8082";
-      BASE_URL = "100.69.173.61:8082";
+      BASE_URL = "http://100.69.173.61:8082";
       
       POLLING_FREQUENCY = "60";
       BATCH_SIZE = "100";
