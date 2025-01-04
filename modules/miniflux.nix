@@ -9,9 +9,7 @@
       LISTEN_ADDR = "0.0.0.0:8082";
       BASE_URL = "http://100.69.173.61:8082";
       
-      CREATE_ADMIN = "1";
-      ADMIN_USERNAME = "admin";
-      ADMIN_PASSWORD = "adminadmin";
+      CREATE_ADMIN = 0;
       
       POLLING_FREQUENCY = "60";
       BATCH_SIZE = "100";
