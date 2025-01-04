@@ -4,12 +4,11 @@
   services.miniflux = {
     enable = true;
     createDatabaseLocally = true;
+    adminCredentialsFile = "/var/lib/miniflux/admin-credentials";
 
     config = {
       CREATE_ADMIN = "1";
-      ADMIN_USERNAME = "k";
-      ADMIN_PASSWORD = "k";
-      
+
       LISTEN_ADDR = "0.0.0.0:8082";
       BASE_URL = "http://100.69.173.61:8082";
       
