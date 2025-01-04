@@ -1,25 +1,17 @@
 {config, pkgs, ... }:
 
-let
-  credentialsContent = ''
-    ADMIN_USERNAME=admin
-    ADMIN_PASSWORD=adminadmin
-  '';
-in
 {
-  systemd.tmpfiles.rules = [
-    "d /var/lib/miniflux 0755 miniflux miniflux -"
-    "f /var/lib/miniflux/admin-credentials 0600 miniflux miniflux - ${builtins.replaceStrings ["\n"] ["\\n"] credentialsContent}"
-  ];
-
   services.miniflux = {
     enable = true;
     createDatabaseLocally = true;
-    adminCredentialsFile = "/var/lib/miniflux/admin-credentials";
     
     config = {
       LISTEN_ADDR = "0.0.0.0:8082";
       BASE_URL = "http://100.69.173.61:8082";
+      
+      CREATE_ADMIN = "1";
+      ADMIN_USERNAME = "admin";
+      ADMIN_PASSWORD = "adminadmin";
       
       POLLING_FREQUENCY = "60";
       BATCH_SIZE = "100";
