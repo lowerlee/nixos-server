@@ -4,7 +4,7 @@ let
   # Create the credentials file using writeText
   adminCredsFile = pkgs.writeText "miniflux-admin-credentials" ''
     ADMIN_USERNAME=k
-    ADMIN_PASSWORD=k
+    ADMIN_PASSWORD=14755612
   '';
 in
 {
