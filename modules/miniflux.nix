@@ -10,6 +10,8 @@
       BASE_URL = "http://100.69.173.61:8082";
       
       CREATE_ADMIN = 0;
+      ADMIN_USERNAME = "admin";
+      ADMIN_PASSWORD = "adminadmin";
       
       POLLING_FREQUENCY = "60";
       BATCH_SIZE = "100";
