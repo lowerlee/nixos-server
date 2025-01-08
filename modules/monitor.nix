@@ -73,6 +73,4 @@
       };
     };
   };
-
-  networking.firewall.allowedTCPPorts = [ 9090 9100 3001 ];
 }
