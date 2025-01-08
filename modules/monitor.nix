@@ -20,6 +20,8 @@
             "temperature"
           ];
           port = 9100;
+          openFirewall = true;  # Add this line
+          listenAddress = "100.69.173.61";  # Add this line
         };
       };
 
@@ -47,9 +49,9 @@
 
     grafana = {
       enable = true;
-      port = 3001;
       settings = {
         server = {
+          http_port = 3001;  # Changed from port = 3001
           domain = "100.69.173.61";
           root_url = "http://100.69.173.61:3001";
           http_addr = "100.69.173.61";
