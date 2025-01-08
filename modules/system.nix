@@ -73,6 +73,7 @@
     qbittorrent-nox
     jellyfin
     docker
+    miniflux
   ];
 
   services.openssh.enable = true;

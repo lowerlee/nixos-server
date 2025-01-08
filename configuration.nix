@@ -15,6 +15,8 @@
     ./modules/rss-bridge.nix
     ./modules/freshrss.nix
     ./modules/docker.nix
+    ./modules/miniflux.nix
+    ./modules/monitor.nix
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];

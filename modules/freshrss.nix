@@ -8,6 +8,10 @@
     requires = [ "docker.service" ];
     after = [ "docker.service" ];
 
+    preStart = ''
+      ${pkgs.docker}/bin/docker rm -f freshrss || true
+    '';
+
     script = ''
       exec ${pkgs.docker}/bin/docker run \
         -d \
@@ -19,6 +23,10 @@
         -v freshrss_extensions:/var/www/FreshRSS/extensions \
         --name freshrss \
         freshrss/freshrss
+    '';
+
+    postStop = ''
+      ${pkgs.docker}/bin/docker rm -f freshrss || true
     '';
 
     serviceConfig = {

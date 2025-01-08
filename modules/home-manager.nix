@@ -26,6 +26,8 @@
           merge = "git merge";
           nixos = "cd /etc/nixos";
           snano = "sudo nano";
+          status = "sudo systemctl status";
+          log = "sudo journalctl -n 50 -u";
         };
       };
     };

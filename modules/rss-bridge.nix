@@ -14,11 +14,13 @@
 
     preStart = ''
       ${pkgs.docker}/bin/docker rm -f rss-bridge || true
+      ${pkgs.docker}/bin/docker rmi -f rss-bridge || true
+      ${pkgs.docker}/bin/docker system prune -f
     '';
 
     script = ''
       if ! ${pkgs.docker}/bin/docker image inspect rss-bridge >/dev/null 2>&1; then
-        ${pkgs.docker}/bin/docker build -t rss-bridge https://github.com/lowerlee/rss-bridge.git#master
+        ${pkgs.docker}/bin/docker build -t rss-bridge https://github.com/lowerlee/rss-bridge.git#master --no-cache
       fi
 
       exec ${pkgs.docker}/bin/docker run \
