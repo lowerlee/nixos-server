@@ -66,9 +66,16 @@
   };
 
   fileSystems."/mnt/storage" = {
-    device = "100.112.79.28:/volume1/media";
-    fsType = "nfs";
-    options = [ "x-systemd.automount" "noauto" ];
+      device = "100.112.79.28:/volume1/media";
+      fsType = "nfs";
+      options = [ 
+        "x-systemd.automount"
+        "noauto"
+        "nfsvers=3"  # Try version 3 explicitly
+        "rw"
+        "async"
+        "no_root_squash"
+      ];
   };
 
   nixpkgs.config.allowUnfree = true;
