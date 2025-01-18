@@ -66,19 +66,20 @@
   };
 
   fileSystems."/mnt/storage" = {
-      device = "100.112.79.28:/volume1/media";
-      fsType = "nfs";
-      options = [ 
-          "defaults"
-          "_netdev"
-          "auto"
-          "nofail"
-          "x-systemd.automount"
-          "x-systemd.requires=network-online.target"
-          "timeo=600"
-          "rw"
-          "soft"
-      ];
+    device = "100.112.79.28:/volume1/media";
+    fsType = "nfs";
+    options = [ 
+      "defaults"
+      "_netdev"
+      "x-systemd.automount"
+      "x-systemd.requires=network-online.target"
+      "timeo=14"
+      "rw"
+      "soft"
+      "intr"
+      "nofail"
+      "vers=4"
+    ];
   };
 
   nixpkgs.config.allowUnfree = true;
