@@ -64,6 +64,12 @@
     options = [ "defaults" "nofail" "rw" ];
   };
 
+  fileSystems."/mount/storage" = {
+    device = "10.0.0.160:/volume1/your_share";
+    fsType = "nfs";
+    options = [ "x-systemd.automount" "noauto" ];
+  };
+
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
@@ -74,6 +80,8 @@
     jellyfin
     docker
     miniflux
+    rsshub
+    nfs-utils
   ];
 
   services.openssh.enable = true;
