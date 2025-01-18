@@ -82,10 +82,12 @@
     miniflux
     rsshub
     nfs-utils
+    rpcbind
   ];
 
   services.openssh.enable = true;
-  
+
   services.nfs.server.enable = true;
+  services.rpcbind.enable = true;
 }
 
