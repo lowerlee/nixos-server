@@ -69,12 +69,15 @@
       device = "100.112.79.28:/volume1/media";
       fsType = "nfs";
       options = [ 
-        "x-systemd.automount"
-        "noauto"
-        "nfsvers=3"  # Try version 3 explicitly
-        "rw"
-        "async"
-        "no_root_squash"
+          "defaults"
+          "_netdev"
+          "auto"
+          "nofail"
+          "x-systemd.automount"
+          "x-systemd.requires=network-online.target"
+          "timeo=600"
+          "rw"
+          "soft"
       ];
   };
 
