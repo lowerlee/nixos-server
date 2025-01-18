@@ -56,6 +56,7 @@
     "d /mnt/media 0777 k users"
     "d /mnt/media/shows 0777 k users"
     "d /mnt/media/movies 0777 k users"
+    "d /mnt/storage 0777 k users" 
   ];
 
   fileSystems."/mnt/media" = {
@@ -64,7 +65,7 @@
     options = [ "defaults" "nofail" "rw" ];
   };
 
-  fileSystems."/mount/storage" = {
+  fileSystems."/mnt/storage" = {
     device = "100.112.79.28:/volume1/media";
     fsType = "nfs";
     options = [ "x-systemd.automount" "noauto" ];
