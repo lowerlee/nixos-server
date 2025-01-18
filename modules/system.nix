@@ -65,7 +65,7 @@
   };
 
   fileSystems."/mount/storage" = {
-    device = "10.0.0.160:/volume1/your_share";
+    device = "100.112.79.28:/volume1/media";
     fsType = "nfs";
     options = [ "x-systemd.automount" "noauto" ];
   };
