@@ -70,7 +70,6 @@
       "soft"
       "nofail"
       "intr"
-      "vers=4.1"
     ];
   };
 
