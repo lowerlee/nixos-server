@@ -56,16 +56,9 @@
     "d /mnt/media 0777 k users"
     "d /mnt/media/shows 0777 k users"
     "d /mnt/media/movies 0777 k users"
-    "d /mnt/storage 0777 k users" 
   ];
 
   fileSystems."/mnt/media" = {
-    device = "/dev/disk/by-uuid/bd186ffd-b2ab-4ab8-85ee-dfb0f490c93c";
-    fsType = "ext4";
-    options = [ "defaults" "nofail" "rw" ];
-  };
-
-  fileSystems."/mnt/storage" = {
     device = "100.112.79.28:/volume1/media";
     fsType = "nfs";
     options = [ 
