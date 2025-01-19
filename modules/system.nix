@@ -48,30 +48,29 @@
   boot.kernelParams = [
     "i8042.nopnp"
     "i8042.reset" 
-    "i8042.nomux"   
+    "i8042.nomux"
   ];
 
   systemd.tmpfiles.rules = [
     "d /mnt 0755 root root"
     "d /mnt/media 0777 k users"
-    "d /mnt/media/shows 0777 k users"
-    "d /mnt/media/movies 0777 k users"
   ];
 
   fileSystems."/mnt/media" = {
     device = "100.112.79.28:/volume1/media";
     fsType = "nfs";
     options = [ 
-      "defaults"
+      "noauto"
       "_netdev"
       "x-systemd.automount"
-      "x-systemd.requires=network-online.target"
-      "timeo=14"
-      "rw"
+      "x-systemd.mount-timeout=10"
+      "timeo=15"
+      "rsize=8192"
+      "wsize=8192"
       "soft"
-      "intr"
       "nofail"
-      "vers=4"
+      "intr"
+      "vers=4.1"
     ];
   };
 
