@@ -30,6 +30,18 @@
           log = "sudo journalctl -n 50 -u";
         };
       };
+      ssh = {
+        enable = true;
+        matchBlocks = {
+          "github.com" = {
+            host = "github.com";
+            identityFile = "~/.ssh/id_ed25519";
+            extraOptions = {
+              AddKeysToAgent = "yes";
+            };
+          };
+        };
+      };
     };
   };
 }
