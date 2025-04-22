@@ -22,8 +22,8 @@
           addresses = [ "tcp://100.90.112.73:22000" "quic://100.90.112.73:22000" ];
         };  
         "work-laptop" = {
-          id = "N6JWB2H-LNOZ2FR-74NHQC2-AYH2ZIE-ECZYTCI-UKNNO45-KSOW3ZI-IQLZUAI";
-          addresses = [ "tcp://100.88.171.12:22000" "quic://100.88.171.12:22000" ];
+          id = "FTV5CLW-AOFEPGW-MP3DG54-TVDETCJ-27JFCKC-FJXFMD2-FEJQCGE-FMA5OQY";
+          addresses = [ "dynamic" ];
         };  
       };
       folders = {
@@ -33,9 +33,9 @@
         };
       };
       options = {
-        localAnnounceEnabled = false;
-        relaysEnabled = false;
-        globalAnnounceEnabled = false;
+        localAnnounceEnabled = true;
+        relaysEnabled = true;
+        globalAnnounceEnabled = true;
       };
     };
   };
