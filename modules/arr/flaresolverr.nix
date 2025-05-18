@@ -4,7 +4,7 @@
   services.flaresolverr = {
     enable = true;
     openFirewall = true;
-    port = 8191;  # Default port
+    port = 8191;
   };
   
   networking.firewall.allowedTCPPorts = [ 8191 ];
