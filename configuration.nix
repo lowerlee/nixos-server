@@ -20,6 +20,7 @@
     ./modules/arr/sonarr.nix
     ./modules/arr/radarr.nix
     ./modules/arr/prowlarr.nix
+    ./modules/arr/flaresolverr.nix
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
