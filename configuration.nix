@@ -19,6 +19,7 @@
     ./modules/monitor.nix
     ./modules/arr/sonarr.nix
     ./modules/arr/radarr.nix
+    ./modules/arr/prowlarr.nix
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
