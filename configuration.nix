@@ -23,5 +23,9 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  nixpkgs.config.permittedInsecurePackages = [
+    "dotnet-sdk-6.0.428"
+  ];
+
   system.stateVersion = "24.11";
 }
