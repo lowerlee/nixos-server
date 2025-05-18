@@ -17,6 +17,8 @@
     ./modules/docker.nix
     ./modules/miniflux.nix
     ./modules/monitor.nix
+    ./modules/arr/sonarr.nix
+    ./modules/arr/radarr.nix
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
