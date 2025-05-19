@@ -17,6 +17,7 @@
     ./modules/docker.nix
     ./modules/miniflux.nix
     ./modules/monitor.nix
+    ./modules/podman.nix
     ./modules/arr/sonarr.nix
     ./modules/arr/radarr.nix
     ./modules/arr/prowlarr.nix
