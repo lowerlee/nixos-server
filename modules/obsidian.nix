@@ -7,17 +7,16 @@
       obsidian-remote = {
         image = "ghcr.io/sytone/obsidian-remote:latest";
         autoStart = true;
-        ports = [ "8090:8080" ];  # Using 8090 to avoid potential conflicts
+        ports = [ "8090:8080" ];
         volumes = [
           "/home/k/obsidian/vaults:/vaults"
           "/home/k/obsidian/config:/config"
         ];
         environment = {
-          PUID = "1000";  # User ID for k (check with id command)
-          PGID = "100";   # Group ID for users (check with id command)
+          PUID = "1000";
+          PGID = "100";
           TZ = "America/Los_Angeles";
           DOCKER_MODS = "linuxserver/mods:universal-git";
-          # SUBFOLDER = "/obsidian/";
         };
         extraOptions = [
           "--security-opt=no-new-privileges:true"
