@@ -86,6 +86,7 @@
     rsshub
     nfs-utils
     rpcbind
+    podman
   ];
 
   services.openssh.enable = true;
