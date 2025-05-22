@@ -14,19 +14,19 @@
         ];
         environment = {
           PUID = "1000";
-          PGID = "100";
+          PGID = "1000";
           TZ = "America/Los_Angeles";
-          DOCKER_MODS = "linuxserver/mods:universal-git";
+          CUSTOM_USER = "abc";
+          PASSWORD = "password";  # Set a password for VNC access
         };
-        extraOptions = [
-          "--security-opt=no-new-privileges:true"
-        ];
       };
     };
   };
 
+  # Open firewall port
   networking.firewall.allowedTCPPorts = [ 8090 ];
 
+  # Create required directories
   systemd.tmpfiles.rules = [
     "d /home/k/obsidian 0755 k users"
     "d /home/k/obsidian/vaults 0755 k users"
