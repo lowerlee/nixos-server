@@ -1,36 +1,25 @@
-{ config, pkgs, lib, ... }:  # Added 'lib' here
+{ config, pkgs, ... }:
 
 {
-  # Your existing configuration
   boot.kernel.sysctl."fs.inotify.max_user_watches" = 524288;
 
-  virtualisation.oci-containers = {
-    backend = "podman";
-    containers = {
-      obsidian-remote = {
-        image = "ghcr.io/sytone/obsidian-remote:latest";
-        autoStart = true;
-        ports = [ "8090:8080" ];
-        volumes = [
-          "/home/k/obsidian/vaults:/vaults"
-          "/home/k/obsidian/config:/config"
-        ];
-        environment = {
-          PUID = "1000";
-          PGID = "1000";
-          TZ = "America/Los_Angeles";
-        };
-      };
-    };
-  };
-
-  # Override the systemd service to add security options
-  systemd.services.podman-obsidian-remote = {
+  # Custom systemd service instead of oci-containers
+  systemd.services.obsidian-remote = {
+    description = "Obsidian Remote Container";
+    after = [ "network.target" ];
+    wantedBy = [ "multi-user.target" ];
+    
     serviceConfig = {
-      ExecStart = lib.mkForce [
-        ""  # Clear the existing ExecStart
-        "${config.virtualisation.podman.package}/bin/podman run --rm --name=obsidian-remote --security-opt seccomp=unconfined --log-driver=journald --cidfile=/run/podman-obsidian-remote.ctr-id --cgroups=no-conmon --sdnotify=conmon -d --replace -p 8090:8080 -v /home/k/obsidian/vaults:/vaults:rw -v /home/k/obsidian/config:/config:rw -e PUID=1000 -e PGID=1000 -e TZ=America/Los_Angeles ghcr.io/sytone/obsidian-remote:latest"
+      Type = "simple";
+      ExecStartPre = [
+        "${pkgs.podman}/bin/podman stop obsidian-remote || true"
+        "${pkgs.podman}/bin/podman rm obsidian-remote || true"
       ];
+      ExecStart = "${pkgs.podman}/bin/podman run --name obsidian-remote --security-opt seccomp=unconfined -p 8090:8080 -v /home/k/obsidian/vaults:/vaults:rw -v /home/k/obsidian/config:/config:rw -e PUID=1000 -e PGID=1000 -e TZ=America/Los_Angeles ghcr.io/sytone/obsidian-remote:latest";
+      ExecStop = "${pkgs.podman}/bin/podman stop obsidian-remote";
+      ExecStopPost = "${pkgs.podman}/bin/podman rm obsidian-remote || true";
+      Restart = "always";
+      RestartSec = "10s";
     };
   };
 
