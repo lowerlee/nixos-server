@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:  # Added 'lib' here
 
 {
   # Your existing configuration
