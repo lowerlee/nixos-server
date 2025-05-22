@@ -24,10 +24,9 @@
   # Open firewall port
   networking.firewall.allowedTCPPorts = [ 8090 ];
 
-  # Create required directories
   systemd.tmpfiles.rules = [
-    "d /home/k/obsidian 0755 k users"
-    "d /home/k/obsidian/vaults 0755 k users"
-    "d /home/k/obsidian/config 0755 k users"
+    "d /home/k/obsidian 0755 k k"        # Changed last 'users' to 'k'
+    "d /home/k/obsidian/vaults 0755 k k"
+    "d /home/k/obsidian/config 0755 k k"
   ];
 }
