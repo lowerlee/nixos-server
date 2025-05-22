@@ -16,11 +16,7 @@
           PUID = "1000";
           PGID = "100";
           TZ = "America/Los_Angeles";
-          DOCKER_MODS = "linuxserver/mods:universal-git";
         };
-        extraOptions = [
-          "--security-opt=no-new-privileges:true"
-        ];
       };
     };
   };
