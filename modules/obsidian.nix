@@ -5,22 +5,17 @@
     backend = "podman";
     containers = {
       obsidian-remote = {
-        image = "ghcr.io/sytone/obsidian-remote:latest";
+        image = "lscr.io/linuxserver/obsidian:latest";  # Changed image
         autoStart = true;
-        ports = [ "8090:8080" ];
+        ports = [ "8090:3000" ];  # Changed port
         volumes = [
-          "/home/k/obsidian/vaults:/vaults"
-          "/home/k/obsidian/config:/config"
+          "/home/k/obsidian/vaults:/config"  # Different mount point
         ];
         environment = {
           PUID = "1000";
           PGID = "1000";
           TZ = "America/Los_Angeles";
-          AUTO_DESKTOP = "1";  # Force desktop auto-start
         };
-        extraOptions = [
-          "--security-opt=no-new-privileges:true"
-        ];
       };
     };
   };
