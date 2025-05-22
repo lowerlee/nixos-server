@@ -14,7 +14,7 @@
         ];
         environment = {
           PUID = "1000";
-          PGID = "100";
+          PGID = "1000";  # Changed from 100 to 1000
           TZ = "America/Los_Angeles";
         };
       };
