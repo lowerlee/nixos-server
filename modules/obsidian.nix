@@ -40,6 +40,16 @@
         volumes = [
           "/home/k/obsidian/vaults:/vaults:Z"
           "/home/k/obsidian/config:/config:Z"
+          # Mount a custom startup script
+          "${pkgs.writeText "custom-autostart" ''
+            [Desktop Entry]
+            Type=Application
+            Name=Obsidian
+            Exec=/usr/bin/obsidian --no-sandbox
+            Hidden=false
+            NoDisplay=false
+            X-GNOME-Autostart-enabled=true
+          ''}:/home/abc/.config/autostart/obsidian.desktop:Z"
         ];
         environment = {
           PUID = "1000";  # User ID for k (check with id command)
