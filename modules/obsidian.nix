@@ -7,22 +7,32 @@
       obsidian-remote = {
         image = "ghcr.io/sytone/obsidian-remote:latest";
         autoStart = true;
-        ports = [ "8090:8080" ];  # Using 8090 to avoid potential conflicts
+        ports = [ "8090:8080" ];
         volumes = [
-          "/home/k/obsidian/vaults:/vaults"
-          "/home/k/obsidian/config:/config"
+          "/home/k/obsidian/vaults:/vaults:Z"
+          "/home/k/obsidian/config:/config:Z"
+          "/home/k/obsidian:/workspace:Z"
         ];
         environment = {
-          PUID = "1000";  # User ID for k (check with id command)
-          PGID = "100";   # Group ID for users (check with id command)
+          PUID = "1000";
+          PGID = "100";
           TZ = "America/Los_Angeles";
-          DOCKER_MODS = "linuxserver/mods:universal-git";
-          # Auto-start Obsidian
-          AUTO_UPDATES = "false";
-          OBSIDIAN_ARGS = "--disable-gpu";
+          # Remove DOCKER_MODS if causing issues
+          # DOCKER_MODS = "linuxserver/mods:universal-git";
+          CUSTOM_PORT = "8080";
+          CUSTOM_USER = "abc";
+          PASSWORD = "";
+          KEYBOARD = "en-us-qwerty";
+          TITLE = "Obsidian Remote";
+          # Force Obsidian to start
+          ENABLE_OBSIDIAN = "true";
+          OBSIDIAN_ARGS = "--disable-gpu-sandbox --no-sandbox";
         };
         extraOptions = [
           "--security-opt=no-new-privileges:true"
+          "--shm-size=2gb"
+          "--cap-add=SYS_ADMIN"
+          "--device=/dev/dri"
         ];
       };
     };
