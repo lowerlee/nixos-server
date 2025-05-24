@@ -41,12 +41,27 @@
           --tmpfs=/tmp:noexec,nosuid,size=1g \
           obsidian-remote:latest-git
         
-        # Wait for container to be ready
-        sleep 15
+        echo "Container started, waiting for desktop environment..."
         
-        # Fix Obsidian startup
+        # Wait longer for desktop to be fully ready
+        for i in {1..40}; do
+          if ${pkgs.podman}/bin/podman exec obsidian-remote pgrep openbox > /dev/null 2>&1; then
+            echo "Desktop environment ready after $i attempts"
+            break
+          fi
+          echo "Waiting for desktop... ($i/40)"
+          sleep 2
+        done
+        
+        # Additional wait for stability
+        sleep 10
+        
+        echo "Setting up and starting Obsidian..."
         ${pkgs.podman}/bin/podman exec obsidian-remote bash -c "
+          # Create autostart directory
           mkdir -p /home/abc/.config/autostart/
+          
+          # Create autostart file
           cat > /home/abc/.config/autostart/obsidian.desktop << 'EOF'
 [Desktop Entry]
 Type=Application
@@ -57,10 +72,38 @@ NoDisplay=false
 X-GNOME-Autostart-enabled=true
 EOF
           chown abc:abc /home/abc/.config/autostart/obsidian.desktop
-          su - abc -c 'DISPLAY=:1 /usr/bin/obsidian --no-sandbox' &
+          
+          # Kill any existing obsidian processes
+          pkill -f obsidian || true
+          
+          # Set up proper environment and start Obsidian
+          export DISPLAY=:1
+          export HOME=/home/abc
+          
+          # Start obsidian as abc user with proper environment
+          nohup su - abc -c 'export DISPLAY=:1; /usr/bin/obsidian --no-sandbox' > /tmp/obsidian.log 2>&1 &
+          
+          # Wait a moment and check if it started
+          sleep 5
+          
+          if pgrep -f obsidian > /dev/null; then
+            echo 'Obsidian started successfully'
+          else
+            echo 'Obsidian failed to start, trying alternative method...'
+            # Try starting with different parameters
+            nohup su - abc -c 'export DISPLAY=:1; /usr/bin/obsidian --disable-gpu --no-sandbox --disable-dev-shm-usage' > /tmp/obsidian2.log 2>&1 &
+            sleep 5
+            if pgrep -f obsidian > /dev/null; then
+              echo 'Obsidian started with alternative parameters'
+            else
+              echo 'Obsidian still failed to start, check logs in container'
+              cat /tmp/obsidian.log || true
+              cat /tmp/obsidian2.log || true
+            fi
+          fi
         "
         
-        echo "Obsidian Remote is ready at http://localhost:8090"
+        echo "Obsidian Remote setup completed - check http://localhost:8090"
       '';
       ExecStop = "${pkgs.podman}/bin/podman stop obsidian-remote";
       Restart = "on-failure";
@@ -74,7 +117,6 @@ EOF
   # Create required directories
   systemd.tmpfiles.rules = [
     "d /home/k/obsidian 0755 k users"
-    "d /home/k/obsidian/vaults 0755 k users"
     "d /home/k/obsidian/config 0755 k users"
   ];
 }
