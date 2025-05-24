@@ -5,34 +5,25 @@
     backend = "podman";
     containers = {
       obsidian-remote = {
-        image = "ghcr.io/sytone/obsidian-remote:latest";
+        # Try a specific version instead of latest
+        image = "ghcr.io/sytone/obsidian-remote:version-1.5.3";
         autoStart = true;
         ports = [ "8090:8080" ];
         volumes = [
           "/home/k/obsidian/vaults:/vaults:Z"
           "/home/k/obsidian/config:/config:Z"
-          "/home/k/obsidian:/workspace:Z"
         ];
         environment = {
           PUID = "1000";
           PGID = "100";
           TZ = "America/Los_Angeles";
-          # Remove DOCKER_MODS if causing issues
-          # DOCKER_MODS = "linuxserver/mods:universal-git";
-          CUSTOM_PORT = "8080";
-          CUSTOM_USER = "abc";
-          PASSWORD = "";
-          KEYBOARD = "en-us-qwerty";
-          TITLE = "Obsidian Remote";
-          # Force Obsidian to start
-          ENABLE_OBSIDIAN = "true";
-          OBSIDIAN_ARGS = "--disable-gpu-sandbox --no-sandbox";
+          # Minimal environment variables
+          DISPLAY = ":99";
+          RESOLUTION = "1920x1080x24";
         };
         extraOptions = [
-          "--security-opt=no-new-privileges:true"
+          "--privileged"  # Sometimes needed for desktop apps
           "--shm-size=2gb"
-          "--cap-add=SYS_ADMIN"
-          "--device=/dev/dri"
         ];
       };
     };
@@ -41,10 +32,12 @@
   # Open firewall port
   networking.firewall.allowedTCPPorts = [ 8090 ];
 
-  # Create required directories
+  # Create required directories with correct permissions
   systemd.tmpfiles.rules = [
     "d /home/k/obsidian 0755 k users"
     "d /home/k/obsidian/vaults 0755 k users"
     "d /home/k/obsidian/config 0755 k users"
+    # Create a test vault
+    "f /home/k/obsidian/vaults/README.md 0644 k users - # Welcome to Obsidian!"
   ];
 }
