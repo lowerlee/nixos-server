@@ -27,7 +27,7 @@
         ${pkgs.podman}/bin/podman run -d \
           --name obsidian-remote \
           -p 8090:8080 \
-          -v /home/k/obsidian/vaults:/vaults:Z \
+          -v /home/k/obsidian:/vaults:Z \
           -v /home/k/obsidian/config:/config:Z \
           -e PUID=1000 \
           -e PGID=100 \
