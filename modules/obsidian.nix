@@ -1,72 +1,70 @@
 { config, pkgs, ... }:
 
 {
-  # Build the image from the latest git main branch (not the old 2022 release)
-  systemd.services.build-obsidian-remote = {
-    description = "Build Obsidian Remote from Latest Git Main Branch";
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStart = pkgs.writeShellScript "build-obsidian" ''
-        set -e
-        export PATH=${pkgs.git}/bin:${pkgs.podman}/bin:$PATH
-        echo "Building obsidian-remote from latest main branch (not 2022 release)..."
-        podman build \
-          --tag obsidian-remote:latest-git \
-          --pull=always \
-          --no-cache \
-          https://github.com/sytone/obsidian-remote.git#main
-        echo "Build completed from latest git commits"
-      '';
-      User = "root";
-    };
+  # Single service that handles everything
+  systemd.services.obsidian-remote-complete = {
+    description = "Complete Obsidian Remote Service";
     wantedBy = [ "multi-user.target" ];
-    path = [ pkgs.git pkgs.podman ];  # Ensure git and podman are available
-  };
-
-  # Ensure container service starts after build
-  systemd.services.podman-obsidian-remote = {
-    after = [ "build-obsidian-remote.service" ];
-    requires = [ "build-obsidian-remote.service" ];
-  };
-
-  virtualisation.oci-containers = {
-    backend = "podman";
-    containers = {
-      obsidian-remote = {
-        image = "obsidian-remote:latest-git";  # Use locally built from main branch
-        autoStart = true;
-        ports = [ "8090:8080" ];  # Using 8090 to avoid potential conflicts
-        volumes = [
-          "/home/k/obsidian/vaults:/vaults:Z"
-          "/home/k/obsidian/config:/config:Z"
-          # Mount a custom startup script
-          "${pkgs.writeText "custom-autostart" ''
-            [Desktop Entry]
-            Type=Application
-            Name=Obsidian
-            Exec=/usr/bin/obsidian --no-sandbox
-            Hidden=false
-            NoDisplay=false
-            X-GNOME-Autostart-enabled=true
-          ''}:/home/abc/.config/autostart/obsidian.desktop:Z"
-        ];
-        environment = {
-          PUID = "1000";  # User ID for k (check with id command)
-          PGID = "100";   # Group ID for users (check with id command)
-          TZ = "America/Los_Angeles";
-          DOCKER_MODS = "linuxserver/mods:universal-git";
-          # Auto-start Obsidian
-          AUTO_UPDATES = "false";
-          OBSIDIAN_ARGS = "--disable-gpu";
-        };
-        extraOptions = [
-          "--security-opt=no-new-privileges:true"
-          "--shm-size=1gb"
-          "--device=/dev/dri"
-          "--tmpfs=/tmp:noexec,nosuid,size=1g"
-        ];
-      };
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+    serviceConfig = {
+      Type = "forking";
+      RemainAfterExit = true;
+      ExecStart = pkgs.writeShellScript "obsidian-complete" ''
+        set -e
+        
+        # Ensure image exists
+        if ! ${pkgs.podman}/bin/podman images | grep -q "obsidian-remote.*latest-git"; then
+          echo "Building obsidian-remote image..."
+          ${pkgs.podman}/bin/podman build -t obsidian-remote:latest-git https://github.com/sytone/obsidian-remote.git#main
+        fi
+        
+        # Stop any existing container
+        ${pkgs.podman}/bin/podman stop obsidian-remote 2>/dev/null || true
+        ${pkgs.podman}/bin/podman rm obsidian-remote 2>/dev/null || true
+        
+        # Start container
+        ${pkgs.podman}/bin/podman run -d \
+          --name obsidian-remote \
+          -p 8090:8080 \
+          -v /home/k/obsidian/vaults:/vaults:Z \
+          -v /home/k/obsidian/config:/config:Z \
+          -e PUID=1000 \
+          -e PGID=100 \
+          -e TZ=America/Los_Angeles \
+          -e DOCKER_MODS=linuxserver/mods:universal-git \
+          -e AUTO_UPDATES=false \
+          -e OBSIDIAN_ARGS=--disable-gpu \
+          --security-opt=no-new-privileges:true \
+          --shm-size=1gb \
+          --device=/dev/dri \
+          --tmpfs=/tmp:noexec,nosuid,size=1g \
+          obsidian-remote:latest-git
+        
+        # Wait for container to be ready
+        sleep 15
+        
+        # Fix Obsidian startup
+        ${pkgs.podman}/bin/podman exec obsidian-remote bash -c "
+          mkdir -p /home/abc/.config/autostart/
+          cat > /home/abc/.config/autostart/obsidian.desktop << 'EOF'
+[Desktop Entry]
+Type=Application
+Name=Obsidian
+Exec=/usr/bin/obsidian --no-sandbox
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+EOF
+          chown abc:abc /home/abc/.config/autostart/obsidian.desktop
+          su - abc -c 'DISPLAY=:1 /usr/bin/obsidian --no-sandbox' &
+        "
+        
+        echo "Obsidian Remote is ready at http://localhost:8090"
+      '';
+      ExecStop = "${pkgs.podman}/bin/podman stop obsidian-remote";
+      Restart = "on-failure";
+      RestartSec = "30";
     };
   };
 
