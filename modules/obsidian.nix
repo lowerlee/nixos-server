@@ -17,6 +17,9 @@
           PGID = "100";   # Group ID for users (check with id command)
           TZ = "America/Los_Angeles";
           DOCKER_MODS = "linuxserver/mods:universal-git";
+          # Auto-start Obsidian
+          AUTO_UPDATES = "false";
+          OBSIDIAN_ARGS = "--disable-gpu";
         };
         extraOptions = [
           "--security-opt=no-new-privileges:true"
