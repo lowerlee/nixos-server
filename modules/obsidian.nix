@@ -9,8 +9,9 @@
       RemainAfterExit = true;
       ExecStart = pkgs.writeShellScript "build-obsidian" ''
         set -e
+        export PATH=${pkgs.git}/bin:${pkgs.podman}/bin:$PATH
         echo "Building obsidian-remote from latest main branch (not 2022 release)..."
-        ${pkgs.podman}/bin/podman build \
+        podman build \
           --tag obsidian-remote:latest-git \
           --pull=always \
           --no-cache \
@@ -20,6 +21,7 @@
       User = "root";
     };
     wantedBy = [ "multi-user.target" ];
+    path = [ pkgs.git pkgs.podman ];  # Ensure git and podman are available
   };
 
   # Ensure container service starts after build
