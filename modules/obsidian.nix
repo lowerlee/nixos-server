@@ -10,22 +10,20 @@
         port = 8092;
       }];
       
-      locations."/" = {
-        return = "301 /obsidian/";
-      };
-      
-      locations."/obsidian" = {
-        return = "301 /obsidian/";
-      };
+      # Remove the redirect locations - they're causing the issue
       
       locations."/obsidian/" = {
         proxyPass = "http://localhost:8090/";
         extraConfig = ''
-          proxy_set_header Host $host;
+          # Fix for Tailscale funnel proxy headers
+          proxy_set_header Host $http_host;
           proxy_set_header X-Real-IP $remote_addr;
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-          proxy_set_header X-Forwarded-Host $host;
+          proxy_set_header X-Forwarded-Proto https;
+          proxy_set_header X-Forwarded-Host $http_host;
+          
+          # Prevent redirect loops
+          proxy_redirect off;
           
           # WebSocket support for real-time features
           proxy_http_version 1.1;
@@ -49,13 +47,16 @@
       };
       
       # Handle any API or static paths that might be accessed directly
-      locations."~ ^/obsidian/(api|static|css|js|img|fonts|media)/" = {
+      locations."~ ^/obsidian/(api|static|css|js|img|fonts|media|audio|public|vnc)/" = {
         proxyPass = "http://localhost:8090";
         extraConfig = ''
-          proxy_set_header Host $host;
+          proxy_set_header Host $http_host;
           proxy_set_header X-Real-IP $remote_addr;
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_set_header X-Forwarded-Proto https;
+          
+          # Prevent redirect loops
+          proxy_redirect off;
           
           # Strip the /obsidian prefix when proxying
           rewrite ^/obsidian/(.*)$ /$1 break;
