@@ -1,23 +1,21 @@
 { config, pkgs, ... }:
 
 {
-  # Main container service
-  systemd.services.obsidian-remote-container = {
-    description = "Obsidian Remote Container";
+  systemd.services.obsidian-remote = {
+    description = "Obsidian Remote Service";
     wantedBy = [ "multi-user.target" ];
     after = [ "network-online.target" ];
     wants = [ "network-online.target" ];
     
     serviceConfig = {
-      Type = "exec";
-      ExecStartPre = pkgs.writeShellScript "obsidian-pre" ''
-        # Stop any existing container
+      Type = "forking";
+      ExecStart = pkgs.writeShellScript "obsidian-start" ''
+        # Remove any existing container
         ${pkgs.podman}/bin/podman stop obsidian-remote 2>/dev/null || true
         ${pkgs.podman}/bin/podman rm obsidian-remote 2>/dev/null || true
-      '';
-      
-      ExecStart = ''
-        ${pkgs.podman}/bin/podman run --rm \
+        
+        # Start container
+        ${pkgs.podman}/bin/podman run -d \
           --name obsidian-remote \
           -p 8090:8080 \
           -v /home/k/obsidian:/vaults:Z \
@@ -32,30 +30,18 @@
           --shm-size=1gb \
           --tmpfs=/tmp:noexec,nosuid,size=1g \
           ghcr.io/sytone/obsidian-remote:latest
-      '';
-      
-      ExecStop = "${pkgs.podman}/bin/podman stop obsidian-remote";
-      Restart = "on-failure";
-      RestartSec = "30";
-    };
-  };
-
-  # Separate service to start Obsidian inside the container
-  systemd.services.obsidian-remote-start = {
-    description = "Start Obsidian inside container";
-    after = [ "obsidian-remote-container.service" ];
-    requires = [ "obsidian-remote-container.service" ];
-    wantedBy = [ "multi-user.target" ];
-    
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      
-      # Wait for container to be fully ready
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'sleep 30'";
-      
-      ExecStart = pkgs.writeShellScript "obsidian-start" ''
-        # Setup autostart
+        
+        # Wait for container to be healthy
+        for i in {1..30}; do
+          if ${pkgs.podman}/bin/podman exec obsidian-remote bash -c "pgrep -x Xvfb" >/dev/null 2>&1; then
+            echo "Container is ready"
+            break
+          fi
+          echo "Waiting for container to be ready... ($i/30)"
+          sleep 2
+        done
+        
+        # Setup and start Obsidian
         ${pkgs.podman}/bin/podman exec obsidian-remote bash -c "
           mkdir -p /home/abc/.config/autostart/
           cat > /home/abc/.config/autostart/obsidian.desktop << 'EOF'
@@ -70,12 +56,17 @@ EOF
           chown abc:abc /home/abc/.config/autostart/obsidian.desktop
         "
         
-        # Start Obsidian
-        ${pkgs.podman}/bin/podman exec -d obsidian-remote bash -c "su - abc -c 'DISPLAY=:1 /usr/bin/obsidian --no-sandbox'"
+        # Start Obsidian in background
+        ${pkgs.podman}/bin/podman exec obsidian-remote bash -c "nohup su - abc -c 'DISPLAY=:1 /usr/bin/obsidian --no-sandbox' >/dev/null 2>&1 &"
+        
+        # Give it a moment to start
+        sleep 5
       '';
       
+      ExecStop = "${pkgs.podman}/bin/podman stop obsidian-remote";
       Restart = "on-failure";
-      RestartSec = "10";
+      RestartSec = "30";
+      TimeoutStartSec = "120";
     };
   };
 
