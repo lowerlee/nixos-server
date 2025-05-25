@@ -1,7 +1,6 @@
 { config, pkgs, ... }:
 
 {
-  # Basic container setup
   virtualisation.oci-containers = {
     backend = "podman";
     containers = {
@@ -29,32 +28,16 @@
     };
   };
 
-  # Timer to check and start Obsidian every minute
-  systemd.timers.obsidian-check = {
-    wantedBy = [ "timers.target" ];
-    timerConfig = {
-      OnBootSec = "1min";
-      OnUnitActiveSec = "1min";
-      Unit = "obsidian-check.service";
-    };
-  };
-
-  systemd.services.obsidian-check = {
-    description = "Check and start Obsidian if needed";
-    after = [ "podman-obsidian-remote.service" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = pkgs.writeShellScript "check-obsidian" ''
-        # Check if container is running
-        if ${pkgs.podman}/bin/podman ps | grep -q obsidian-remote; then
-          # Check if Obsidian process is running
-          if ! ${pkgs.podman}/bin/podman exec obsidian-remote pgrep -f "obsidian --no-sandbox" >/dev/null 2>&1; then
-            echo "Starting Obsidian..."
-            
-            # Setup autostart first
-            ${pkgs.podman}/bin/podman exec obsidian-remote bash -c "
-              mkdir -p /home/abc/.config/autostart/
-              cat > /home/abc/.config/autostart/obsidian.desktop << 'EOF'
+  # Override the generated service to add our startup command
+  systemd.services.podman-obsidian-remote = {
+    serviceConfig.ExecStartPost = pkgs.writeShellScript "start-obsidian" ''
+      # Wait for container to be ready
+      sleep 40
+      
+      # Setup and start Obsidian
+      ${pkgs.podman}/bin/podman exec obsidian-remote bash -c "
+        mkdir -p /home/abc/.config/autostart/
+        cat > /home/abc/.config/autostart/obsidian.desktop << 'EOF'
 [Desktop Entry]
 Type=Application
 Name=Obsidian
@@ -63,15 +46,11 @@ Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
 EOF
-              chown abc:abc /home/abc/.config/autostart/obsidian.desktop
-            "
-            
-            # Start Obsidian
-            ${pkgs.podman}/bin/podman exec -d obsidian-remote bash -c "su - abc -c 'DISPLAY=:1 /usr/bin/obsidian --no-sandbox'"
-          fi
-        fi
-      '';
-    };
+        chown abc:abc /home/abc/.config/autostart/obsidian.desktop
+      "
+      
+      ${pkgs.podman}/bin/podman exec -d obsidian-remote bash -c "su - abc -c 'DISPLAY=:1 /usr/bin/obsidian --no-sandbox'"
+    '';
   };
 
   networking.firewall.allowedTCPPorts = [ 8090 ];
