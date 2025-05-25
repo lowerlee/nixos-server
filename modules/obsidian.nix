@@ -1,7 +1,70 @@
 { config, pkgs, ... }:
 
 {
-  # Single service that handles everything
+  # Nginx reverse proxy for subpath support
+  services.nginx = {
+    enable = true;
+    virtualHosts."localhost" = {
+      listen = [{
+        addr = "127.0.0.1";
+        port = 8092;
+      }];
+      
+      locations."/" = {
+        return = "301 /obsidian/";
+      };
+      
+      locations."/obsidian" = {
+        return = "301 /obsidian/";
+      };
+      
+      locations."/obsidian/" = {
+        proxyPass = "http://localhost:8090/";
+        extraConfig = ''
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_set_header X-Forwarded-Host $host;
+          
+          # WebSocket support for real-time features
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection "upgrade";
+          
+          # Increase timeouts for long-running operations
+          proxy_read_timeout 86400;
+          proxy_send_timeout 86400;
+          
+          # Rewrite response content to fix paths
+          sub_filter_types text/html text/css text/javascript application/javascript application/json;
+          sub_filter 'href="/' 'href="/obsidian/';
+          sub_filter 'src="/' 'src="/obsidian/';
+          sub_filter 'url(/' 'url(/obsidian/';
+          sub_filter 'action="/' 'action="/obsidian/';
+          sub_filter '/api/' '/obsidian/api/';
+          sub_filter '/static/' '/obsidian/static/';
+          sub_filter_once off;
+        '';
+      };
+      
+      # Handle any API or static paths that might be accessed directly
+      locations."~ ^/obsidian/(api|static|css|js|img|fonts|media)/" = {
+        proxyPass = "http://localhost:8090";
+        extraConfig = ''
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          
+          # Strip the /obsidian prefix when proxying
+          rewrite ^/obsidian/(.*)$ /$1 break;
+        '';
+      };
+    };
+  };
+
+  # Original Obsidian Remote service configuration
   systemd.services.obsidian-remote-complete = {
     description = "Complete Obsidian Remote Service";
     wantedBy = [ "multi-user.target" ];
@@ -68,8 +131,8 @@ EOF
     };
   };
 
-  # Open firewall port
-  networking.firewall.allowedTCPPorts = [ 8090 ];
+  # Open firewall ports for both direct access and nginx proxy
+  networking.firewall.allowedTCPPorts = [ 8090 8092 ];
 
   # Create required directories
   systemd.tmpfiles.rules = [
