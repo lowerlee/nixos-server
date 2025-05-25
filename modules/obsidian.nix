@@ -1,31 +1,23 @@
 { config, pkgs, ... }:
 
 {
-  # Single service that handles everything
-  systemd.services.obsidian-remote-complete = {
-    description = "Complete Obsidian Remote Service";
+  # Main container service
+  systemd.services.obsidian-remote-container = {
+    description = "Obsidian Remote Container";
     wantedBy = [ "multi-user.target" ];
     after = [ "network-online.target" ];
     wants = [ "network-online.target" ];
+    
     serviceConfig = {
-      Type = "forking";
-      RemainAfterExit = true;
-      TimeoutStartSec = "300";  # Give it 5 minutes to start
-      ExecStart = pkgs.writeShellScript "obsidian-complete" ''
-        set -e
-        
-        # Ensure image exists
-        if ! ${pkgs.podman}/bin/podman images | grep -q "obsidian-remote.*latest-git"; then
-          echo "Building obsidian-remote image..."
-          ${pkgs.podman}/bin/podman build -t obsidian-remote:latest-git https://github.com/sytone/obsidian-remote.git#main
-        fi
-        
+      Type = "exec";
+      ExecStartPre = pkgs.writeShellScript "obsidian-pre" ''
         # Stop any existing container
         ${pkgs.podman}/bin/podman stop obsidian-remote 2>/dev/null || true
         ${pkgs.podman}/bin/podman rm obsidian-remote 2>/dev/null || true
-        
-        # Start container
-        ${pkgs.podman}/bin/podman run -d \
+      '';
+      
+      ExecStart = ''
+        ${pkgs.podman}/bin/podman run --rm \
           --name obsidian-remote \
           -p 8090:8080 \
           -v /home/k/obsidian:/vaults:Z \
@@ -38,40 +30,35 @@
           -e OBSIDIAN_ARGS=--disable-gpu \
           --security-opt=no-new-privileges:true \
           --shm-size=1gb \
-          --device=/dev/dri \
           --tmpfs=/tmp:noexec,nosuid,size=1g \
-          obsidian-remote:latest-git
-        
-        echo "Container started - use manual script to start Obsidian"
+          ghcr.io/sytone/obsidian-remote:latest
       '';
+      
       ExecStop = "${pkgs.podman}/bin/podman stop obsidian-remote";
       Restart = "on-failure";
       RestartSec = "30";
     };
   };
 
-  # Create the manual script for starting Obsidian
-  environment.systemPackages = [
-    (pkgs.writeShellScriptBin "start-obsidian" ''
-      echo "Starting Obsidian in container..."
+  # Separate service to start Obsidian inside the container
+  systemd.services.obsidian-remote-start = {
+    description = "Start Obsidian inside container";
+    after = [ "obsidian-remote-container.service" ];
+    requires = [ "obsidian-remote-container.service" ];
+    wantedBy = [ "multi-user.target" ];
+    
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
       
-      # Wait for container to be ready
-      for i in {1..30}; do
-        if ${pkgs.podman}/bin/podman ps | grep obsidian-remote > /dev/null; then
-          break
-        fi
-        echo "Waiting for container... ($i/30)"
-        sleep 2
-      done
+      # Wait for container to be fully ready
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'sleep 30'";
       
-      # Wait for desktop environment
-      echo "Waiting for desktop environment..."
-      sleep 15
-      
-      # Start Obsidian
-      ${pkgs.podman}/bin/podman exec obsidian-remote bash -c "
-        mkdir -p /home/abc/.config/autostart/
-        cat > /home/abc/.config/autostart/obsidian.desktop << 'EOF'
+      ExecStart = pkgs.writeShellScript "obsidian-start" ''
+        # Setup autostart
+        ${pkgs.podman}/bin/podman exec obsidian-remote bash -c "
+          mkdir -p /home/abc/.config/autostart/
+          cat > /home/abc/.config/autostart/obsidian.desktop << 'EOF'
 [Desktop Entry]
 Type=Application
 Name=Obsidian
@@ -80,21 +67,23 @@ Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
 EOF
-        chown abc:abc /home/abc/.config/autostart/obsidian.desktop
-        pkill -f obsidian || true
-        su - abc -c 'DISPLAY=:1 /usr/bin/obsidian --no-sandbox' &
-      "
+          chown abc:abc /home/abc/.config/autostart/obsidian.desktop
+        "
+        
+        # Start Obsidian
+        ${pkgs.podman}/bin/podman exec -d obsidian-remote bash -c "su - abc -c 'DISPLAY=:1 /usr/bin/obsidian --no-sandbox'"
+      '';
       
-      echo "Obsidian should be starting - check http://100.69.173.61:8090"
-    '')
-  ];
+      Restart = "on-failure";
+      RestartSec = "10";
+    };
+  };
 
-  # Open firewall port
   networking.firewall.allowedTCPPorts = [ 8090 ];
 
-  # Create required directories
   systemd.tmpfiles.rules = [
     "d /home/k/obsidian 0755 k users"
+    "d /home/k/obsidian/vaults 0755 k users"
     "d /home/k/obsidian/config 0755 k users"
   ];
 }
