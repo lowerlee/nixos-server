@@ -57,7 +57,7 @@
   ];
 
   fileSystems."/mnt/media" = {
-    device = "192.168.68.62:/volume1/media";
+    device = "100.112.79.28:/volume1/media";
     fsType = "nfs";
     options = [ 
       "noauto"
