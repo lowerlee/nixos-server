@@ -63,13 +63,8 @@
       "noauto"
       "_netdev"
       "x-systemd.automount"
-      "x-systemd.mount-timeout=10"
-      "timeo=15"
-      "rsize=8192"
-      "wsize=8192"
       "soft"
       "nofail"
-      "intr"
     ];
   };
 
