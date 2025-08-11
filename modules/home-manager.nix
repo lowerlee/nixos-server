@@ -34,14 +34,14 @@
           newbranch = "git checkout -b";
           pushup = "git push -u origin";
 
-          alias mountnas='sudo mount -t nfs 100.112.79.28:/volume1/media /mnt/media'
+          alias mountnas='sudo mount -t nfs 100.112.79.28:/volume1/media /mnt/media';
 
           rebuild() {
               cd /etc/nixos
               git add .
               git commit -m "$1"
               sudo nixos-rebuild switch --flake .
-          }
+          };
         };
       };
       ssh = {
