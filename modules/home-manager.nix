@@ -5,7 +5,7 @@
     home.stateVersion = "24.11";           
 
     home.packages = with pkgs; [
-      git
+      # other packages here
     ];
 
     programs = {
@@ -34,15 +34,16 @@
           newbranch = "git checkout -b";
           pushup = "git push -u origin";
 
-          alias mountnas='sudo mount -t nfs 100.112.79.28:/volume1/media /mnt/media';
-
+          mountnas = "sudo mount -t nfs 100.112.79.28:/volume1/media /mnt/media";
+        };
+        bashrcExtra = ''
           rebuild() {
               cd /etc/nixos
               git add .
               git commit -m "$1"
               sudo nixos-rebuild switch --flake .
-          };
-        };
+          }
+        '';
       };
       ssh = {
         enable = true;
