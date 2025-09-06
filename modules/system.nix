@@ -68,6 +68,18 @@
     ];
   };
 
+  fileSystems."/mnt/media2" = {
+    device = "100.112.79.28:/volume2/media2";
+    fsType = "nfs";
+    options = [ 
+      "noauto"
+      "_netdev"
+      "x-systemd.automount"
+      "soft"
+      "nofail"
+    ];
+  };
+
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
