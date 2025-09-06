@@ -12,10 +12,6 @@
     ./modules/tailscale.nix
     ./modules/qbittorrent.nix
     ./modules/jellyfin.nix
-    # ./modules/rss-bridge.nix
-    # ./modules/freshrss.nix
-    # ./modules/docker.nix
-    # ./modules/miniflux.nix
     # ./modules/monitor.nix
     ./modules/podman.nix
     ./modules/arr/sonarr.nix
