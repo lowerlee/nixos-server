@@ -54,13 +54,13 @@
   systemd.tmpfiles.rules = [
     "d /mnt 0755 root root"
     "d /mnt/media 0777 k users"
+    "d /mnt/media2 0777 k users"
   ];
 
   fileSystems."/mnt/media" = {
     device = "100.112.79.28:/volume1/media";
     fsType = "nfs";
-    options = [ 
-      "noauto"
+    options = [
       "_netdev"
       "x-systemd.automount"
       "soft"
@@ -71,8 +71,7 @@
   fileSystems."/mnt/media2" = {
     device = "100.112.79.28:/volume2/media2";
     fsType = "nfs";
-    options = [ 
-      "noauto"
+    options = [
       "_netdev"
       "x-systemd.automount"
       "soft"
