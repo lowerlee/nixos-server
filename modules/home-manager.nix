@@ -48,6 +48,8 @@
 
           # git commit and push with a message
           newcommit() {
+            cd /etc/nixos
+
             git add .
 
             echo -n "Enter commit message: "
