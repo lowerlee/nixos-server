@@ -13,7 +13,7 @@
         ${pkgs.qbittorrent-nox}/bin/qbittorrent-nox \
         --webui-port=8080 \
         --torrenting-port=8999 \
-        --save-path=/mnt/media \
+        --save-path=/mnt/media2 \
       '';
       User = "k";
       Group = "users";
