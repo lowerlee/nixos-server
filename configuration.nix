@@ -23,6 +23,7 @@
     ./modules/arr/prowlarr.nix
     ./modules/arr/flaresolverr.nix
     ./modules/obsidian.nix
+    # ./modules/nginx.nix
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];

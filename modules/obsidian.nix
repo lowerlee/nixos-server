@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 {
-  # Single service that handles everything
+  # Original Obsidian Remote service configuration
   systemd.services.obsidian-remote-complete = {
     description = "Complete Obsidian Remote Service";
     wantedBy = [ "multi-user.target" ];
@@ -68,8 +68,8 @@ EOF
     };
   };
 
-  # Open firewall port
-  networking.firewall.allowedTCPPorts = [ 8090 ];
+  # Open firewall ports for both direct access and nginx proxy
+  networking.firewall.allowedTCPPorts = [ 8090 8092 ];
 
   # Create required directories
   systemd.tmpfiles.rules = [
