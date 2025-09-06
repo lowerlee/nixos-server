@@ -58,9 +58,10 @@
   ];
 
   fileSystems."/mnt/media" = {
-    device = "100.112.79.28:/volume1/media";
+    device = "192.168.68.62:/volume1/media";
     fsType = "nfs";
     options = [
+      "noauto"
       "_netdev"
       "x-systemd.automount"
       "soft"
@@ -69,9 +70,10 @@
   };
 
   fileSystems."/mnt/media2" = {
-    device = "100.112.79.28:/volume2/media2";
+    device = "192.168.68.62:/volume2/media2";
     fsType = "nfs";
     options = [
+      "noauto"
       "_netdev"
       "x-systemd.automount"
       "soft"
